@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import ResetPassword from "./components/ResetPassword";
 import ForgotPassword from "./components/ForgotPassword";
 import { Navigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (

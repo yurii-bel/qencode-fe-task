@@ -5,6 +5,8 @@ import { FaGithub } from "react-icons/fa";
 import Divider from "./Divider";
 import InputField from "./InputField";
 import { Link } from "react-router-dom";
+import { validator } from "../utils/validation";
+import { ToastContainer } from "react-toastify";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -32,6 +34,9 @@ const Login = () => {
 
   const loginWithQencode = (e) => {
     e.preventDefault();
+    if (validator({ email, password })) {
+      // Login logic
+    }
   };
 
   return (
@@ -39,6 +44,7 @@ const Login = () => {
       <h1 className="text-[32px] text-main-blue font-bold">Qencode</h1>
       <div className="flex flex-col justify-center items-center w-[400px] mt-[80px]">
         <h2 className="h2-heading">Log in to your account</h2>
+        <ToastContainer />
         <form>
           <div className="flex gap-4 mt-[40px]">
             <Button

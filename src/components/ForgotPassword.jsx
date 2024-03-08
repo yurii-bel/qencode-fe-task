@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Button from "./Button";
 import InputField from "./InputField";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import { validator } from "../utils/validation";
 
 const ForgotPassword = () => {
   const [formData, setFormData] = useState({
@@ -21,8 +23,10 @@ const ForgotPassword = () => {
   const handleSendEmail = (e) => {
     e.preventDefault();
     try {
-      // Logic with api and validation
-      navigate("/login/reset-password");
+      // Logic with api
+      if (validator({ email })) {
+        navigate("/login/reset-password");
+      }
     } catch (error) {
       console.error(error);
     }
@@ -38,6 +42,7 @@ const ForgotPassword = () => {
       <h1 className="text-[32px] text-main-blue font-bold">Qencode</h1>
       <div className="flex flex-col justify-center items-center w-[400px] mt-[80px]">
         <h2 className="h2-heading">Forgot Password?</h2>
+        <ToastContainer />
         <form className="w-[400px]">
           <div className="flex flex-col gap-[25px] mt-[40px]">
             <InputField
