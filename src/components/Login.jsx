@@ -6,7 +6,9 @@ import Divider from "./Divider";
 import InputField from "./InputField";
 import { Link } from "react-router-dom";
 import { validator } from "../utils/validation";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import { authQencode } from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +20,8 @@ const Login = () => {
 
   const { email, password } = formData;
 
+  const navigate = useNavigate();
+
   const onChange = (e) =>
     setFormData((prev) => ({
       ...prev,
@@ -26,16 +30,25 @@ const Login = () => {
 
   const loginWithGoogle = (e) => {
     e.preventDefault();
+    // Implement Google login functionality here
   };
 
   const loginWithGithub = (e) => {
     e.preventDefault();
+    // Implement GitHub login functionality here
   };
 
-  const loginWithQencode = (e) => {
+  const loginWithQencode = async (e) => {
     e.preventDefault();
     if (validator({ email, password })) {
-      // Login logic
+      try {
+        await authQencode({ email, password });
+        navigate("/");
+        toast.success("You have successfully logged in");
+      } catch (error) {
+        console.error("Error logging in:", error);
+        toast.error("Failed to log in. Please try again.");
+      }
     }
   };
 

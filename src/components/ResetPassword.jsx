@@ -3,13 +3,16 @@ import Button from "./Button";
 import InputField from "./InputField";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { validator } from "../utils/validation";
+import { initiatePasswordSet } from "../api/api";
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({
     password: "",
     confirm_password: "",
   });
+
+  // temporary variable
+  const secret = "abc";
 
   const { password, confirm_password } = formData;
 
@@ -23,20 +26,15 @@ const ResetPassword = () => {
       [e.target.id]: e.target.value,
     }));
 
-  const handleResetPassword = (e) => {
+  const handleInitiatePasswordReset = async (e) => {
     e.preventDefault();
     try {
-      // Logic with api
-      if (validator({ password })) {
-        if (password !== confirm_password) {
-          console.error("Passwords do not match");
-          toast.error("Passwords do not match");
-          return false;
-        }
-        navigate("/login");
-      }
+      await initiatePasswordSet(secret, password);
+      toast.success("Password successfully reseted");
+      navigate("/login");
     } catch (error) {
-      console.error(error);
+      console.error("Failed to reset password", error);
+      toast.error("Failed to reset password. Please try again.");
     }
   };
 
@@ -62,7 +60,7 @@ const ResetPassword = () => {
               name="confirm_password"
               id="confirm_password"
               type={showPassword ? "text" : "password"}
-              placeholder="Password"
+              placeholder="Confirm Password"
               value={confirm_password}
               onChange={onChange}
               className="border-[1.2px] border-border-gray rounded-md p-2 w-full"
@@ -73,7 +71,7 @@ const ResetPassword = () => {
             <Button
               text="Reset Password"
               className="btn-text-main text-[#fff] flex justify-center items-center w-full h-[48px] bg-main-blue rounded-[8px] mt-[30px]"
-              onClick={handleResetPassword}
+              onClick={handleInitiatePasswordReset}
             />
           </div>
         </form>

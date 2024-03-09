@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import Button from "./Button";
 import InputField from "./InputField";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { validator } from "../utils/validation";
+import { initiatePasswordReset } from "../api/api";
 
 const ForgotPassword = () => {
   const [formData, setFormData] = useState({
@@ -20,15 +21,15 @@ const ForgotPassword = () => {
       [e.target.id]: e.target.value,
     }));
 
-  const handleSendEmail = (e) => {
+  const handleSendEmail = async (e) => {
     e.preventDefault();
-    try {
-      // Logic with api
-      if (validator({ email })) {
+    if (validator({ email })) {
+      try {
+        await initiatePasswordReset({ email });
         navigate("/login/reset-password");
+      } catch (error) {
+        toast.error("Failed to send reset email. Please try again.");
       }
-    } catch (error) {
-      console.error(error);
     }
   };
 
