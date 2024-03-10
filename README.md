@@ -42,24 +42,6 @@ This project is an implementation of the Qencode Login Interface using React. It
 
 You can view a live demo of the Qencode Login Interface [here](#).
 
-## Folder Structure
-
-qencode-login-interface/
-├── public/
-├── src/
-│ ├── components/
-│ │ ├── Login.js
-│ │ ├── ForgotPassword.js
-│ │ ├── ResetPassword.js
-│ ├── api/
-│ │ ├── api.js
-│ ├── App.js
-│ ├── index.js
-│ ├── styles.css
-├── package.json
-├── README.md
-
-
 ## API Integration
 
 The application integrates with the Qencode Authentication API for handling login, password reset, and password set requests.
