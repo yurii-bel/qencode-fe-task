@@ -26,15 +26,15 @@ This project is an implementation of the Qencode Login Interface using React. It
 
 2. **Navigate to the project directory:**
 
-  cd qencode-fe-task
+   cd qencode-fe-task
   
 3. **Install dependencies:**
 
-  npm install 
+   npm install 
 
 4. **Start the development server:**
 
-  npm start
+   npm start
 
 5. **Open [http://localhost:3000](http://localhost:3000) to view it in the browser.**
 
