@@ -3,53 +3,54 @@ import Button from "./Button";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import Divider from "./Divider";
-import InputField from "./InputField";
 import { Link } from "react-router-dom";
-import { validator } from "../utils/validation";
 import { ToastContainer, toast } from "react-toastify";
 import { authQencode } from "../api/api";
 import { useNavigate } from "react-router-dom";
+import { FiEye, FiEyeOff } from "react-icons/fi";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+  const schema = z.object({
+    email: z.string().email(),
+    password: z
+      .string()
+      .min(8, { message: "Password must contain at least 8 character(s)" }),
   });
 
-  const [showPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const handleTogglePassword = () => setShowPassword(!showPassword);
 
-  const { email, password } = formData;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit = async (data) => {
+    const { email, password } = data;
+    const loggedIn = await authQencode({ email, password });
+    if (loggedIn) {
+      toast.success("You have successfully logged in", {
+        onClose: () => {
+          navigate("/");
+        },
+      });
+    }
+  };
 
   const navigate = useNavigate();
 
-  const onChange = (e) =>
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.id]: e.target.value,
-    }));
-
   const loginWithGoogle = (e) => {
     e.preventDefault();
-    // Implement Google login functionality here
   };
 
   const loginWithGithub = (e) => {
     e.preventDefault();
-    // Implement GitHub login functionality here
-  };
-
-  const loginWithQencode = async (e) => {
-    e.preventDefault();
-    if (validator({ email, password })) {
-      try {
-        await authQencode({ email, password });
-        navigate("/");
-        toast.success("You have successfully logged in");
-      } catch (error) {
-        console.error("Error logging in:", error);
-        toast.error("Failed to log in. Please try again.");
-      }
-    }
   };
 
   return (
@@ -58,7 +59,7 @@ const Login = () => {
       <div className="flex flex-col justify-center items-center w-[400px] mt-[80px]">
         <h2 className="h2-heading">Log in to your account</h2>
         <ToastContainer />
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex gap-4 mt-[40px]">
             <Button
               text="Google"
@@ -73,45 +74,62 @@ const Login = () => {
               onClick={loginWithGithub}
             />
           </div>
-          <Divider />
-          <div className="flex flex-col gap-[25px] mt-[30px]">
-            <InputField
-              name="email"
-              id="email"
-              placeholder="Work email"
-              value={email}
-              onChange={onChange}
-              className="border-[1.2px] border-border-gray rounded-md p-2 w-full"
-            />
-            <InputField
-              name="password"
-              id="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              value={password}
-              onChange={onChange}
-              className="border-[1.2px] border-border-gray rounded-md p-2 w-full"
-              icon={true}
-            />
-          </div>
-          <Link to="/login/forgot-password">
-            <p className="text-main-blue font-[500] text-[14px] text-right mt-[15px]">
-              Forgot your password?
-            </p>
-          </Link>
-          <Button
-            text="Log in to Qencode"
-            className="btn-text-main text-[#fff] flex justify-center items-center w-full h-[48px] bg-main-blue rounded-[8px] mt-[30px]"
-            onClick={loginWithQencode}
-          />
 
-          <div className="flex gap-1 justify-center items-center mt-[30px]">
-            <p className="text-black-secondary-text">
-              Is your company new to Qencode?
+          <Divider />
+
+          <div className="flex flex-col gap-[25px] mt-[30px]">
+            <div>
+              <input
+                className="border-[1.2px] border-border-gray rounded-md p-2 w-full"
+                {...register("email")}
+                type="text"
+                placeholder="Work Email"
+              />
+              {errors.email && (
+                <div style={{ color: "red" }}>{errors.email.message}</div>
+              )}
+            </div>
+            <div className="relative">
+              <input
+                className="border-[1.2px] border-border-gray rounded-md p-2 w-full"
+                {...register("password")}
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 flex items-center px-3 focus:outline-none"
+                onClick={handleTogglePassword}
+              >
+                {showPassword ? (
+                  <FiEye className="text-icon-eye-text" />
+                ) : (
+                  <FiEyeOff className="text-icon-eye-text" />
+                )}
+              </button>
+              {errors.password && (
+                <div
+                  style={{ color: "red" }}
+                  className="absolute bottom-[-20px] left-0"
+                >
+                  {errors.password.message}
+                </div>
+              )}
+            </div>
+
+            <p className="text-main-blue font-[500] text-[14px] text-right mt-[15px]">
+              <Link to="/login/forgot-password">Forgot your password?</Link>
             </p>
-            <Link to="" className="text-main-blue font-[500]">
-              Sign up
-            </Link>
+
+            <Button
+              type="submit"
+              text="Log in to Qencode"
+              className="btn-text-main text-[#fff] flex justify-center items-center w-full h-[48px] bg-main-blue rounded-[8px] mt-[30px]"
+              disabled={isSubmitting}
+            />
+            {errors.root && (
+              <div className="text-red-500">{errors.root.message}</div>
+            )}
           </div>
         </form>
       </div>
